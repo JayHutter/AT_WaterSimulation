@@ -6,8 +6,6 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Fluid : MonoBehaviour
 {
-    //FluidCube fluid3D;
-    //FluidSquare fluid2D;
     FluidSim simulation;
 
     public int fluidSize = 16;
@@ -37,8 +35,6 @@ public class Fluid : MonoBehaviour
             DestroyImmediate(water);
         }
 
-        //fluid3D = new FluidCube(fluidSize, diffusion, viscocity, Time.deltaTime);
-        //fluid2D = new FluidSquare(fluidSize, diffusion, viscocity, Time.deltaTime, 4);
         simulation = new FluidSim(fluidSize, diffusion, viscocity, accuracy);
         CreateMesh2D();
     }
@@ -83,8 +79,6 @@ public class Fluid : MonoBehaviour
                     density = 2;
                 }
 
-                //fluid2D.AddDensity(x, y, density);
-                //fluid2D.AddVelocity(x, y, velX, velY);
                 simulation.ApplyForceAt(x, y, velY, velY, density);
             }
         }
@@ -96,11 +90,6 @@ public class Fluid : MonoBehaviour
         {
             mesh = new Mesh();
         }
-
-        //if (waterObj)
-        //{
-        //    return;
-        //}
 
         int size = simulation.Size();
 
@@ -237,8 +226,8 @@ public class Fluid : MonoBehaviour
 
         float xVel = rb.velocity.x;
         float yVel = rb.velocity.z;
-        Debug.Log(new Vector2(x, y));
-        //fluid2D.AddVelocity(x, y, xVel * speed, yVel * speed);
+
+        simulation.ApplyForceAt(x, y, xVel, yVel, 0);
     }
 
     public void CircleSplash(Vector3 worldCoords, float power)
@@ -247,7 +236,6 @@ public class Fluid : MonoBehaviour
         int centerX = (int)center.x;
         int centerY = (int)center.y;
 
-
         for (int x = -1; x<=1; x++)
         {
             for (int y=-1; y<=1; y++)
@@ -255,9 +243,7 @@ public class Fluid : MonoBehaviour
                 Vector2 force = new Vector2(x, y);
                 force.Normalize();
                 force *= (power/8);
-
-                //fluid2D.AddDensity(centerX + x, centerY + y, power/2);
-                //fluid2D.AddVelocity(centerX + x, centerY + y, force.x, force.y);
+                simulation.ApplyForceAt(centerX + x, centerY + y, force, power);
             }
         }
     }

@@ -45,7 +45,7 @@ public class FluidSim
     }
 
     // At the edge of the grid reflect the water inwards
-    void SetBounds(int type, float[,] data)
+    void SetBounds(DataType type, float[,] data)
     {
         /*
          * Far Left and Far Right cells
@@ -54,10 +54,10 @@ public class FluidSim
         */
         for (int x = 1; x < size - 1; x++)
         {
-            data[x, 0] = type == 3 ?
+            data[x, 0] = type == DataType.YVELOCITY ?
                 -data[x, 1] : data[x, 1];
 
-            data[x, size - 1] = type == 3 ?
+            data[x, size - 1] = type == DataType.YVELOCITY ?
                 -data[x, size - 2] : data[x, size - 2];
         }
 
@@ -68,10 +68,10 @@ public class FluidSim
         */
         for (int y = 1; y < size - 1; y++)
         {
-            data[0, y] = type == 1 ?
+            data[0, y] = type == DataType.XVELOCITY ?
                 -data[1, y] : data[1, y];
 
-            data[size - 1, y] = type == 1 ?
+            data[size - 1, y] = type == DataType.XVELOCITY ?
                 -data[size - 2, y] : data[size - 2, y];
         }
 
@@ -101,7 +101,7 @@ public class FluidSim
             }
 
             //Update boundry data
-            SetBounds((int)type, data);
+            SetBounds(type, data);
         }
     }
 
@@ -163,7 +163,7 @@ public class FluidSim
             }
         }
 
-        SetBounds((int)type, data);
+        SetBounds(type, data);
     }
 
     void Project(float[,] velX, float[,] velY, float[,] p, float[,] div)
@@ -193,8 +193,8 @@ public class FluidSim
             }
         }
 
-        SetBounds((int)DataType.XVELOCITY, velX);
-        SetBounds((int)DataType.YVELOCITY, velY);
+        SetBounds(DataType.XVELOCITY, velX);
+        SetBounds(DataType.YVELOCITY, velY);
     }
 
     public void Update()
