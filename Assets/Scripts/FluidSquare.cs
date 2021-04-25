@@ -4,7 +4,6 @@ using UnityEngine;
 
 class FluidSquare
 {
-
     int size;
     float dt;
     float diff;
@@ -94,9 +93,9 @@ class FluidSquare
     //Diffuse the cells around a point
     void diffuse(int b, float[] x, float[] x0, float diff, float dt, int N)
     {
-        float a = dt * diff * (N - 2) * (N - 2);
+        float a = dt * diff *(N - 2) * (N - 2);
         lin_solve(b, x, x0, a, 1 + 6 * a, N);
-    }
+    } 
 
     //Apply the velocities
     void advect(int b, float[] d, float[] d0, float[] velocX, float[] velocY, float dt, int N)
@@ -126,6 +125,7 @@ class FluidSquare
                 if (x > Nfloat + 0.5f) x = Nfloat + 0.5f;
                 i0 = Mathf.Floor(x);
                 i1 = i0 + 1.0f;
+
                 if (y < 0.5f) y = 0.5f;
                 if (y > Nfloat + 0.5f) y = Nfloat + 0.5f;
                 j0 = Mathf.Floor(y);

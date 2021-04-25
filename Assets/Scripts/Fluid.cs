@@ -6,10 +6,9 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Fluid : MonoBehaviour
 {
-    FluidCube fluid3D;
-    FluidSquare fluid2D;
-
-    public bool simulate3D = false;
+    //FluidCube fluid3D;
+    //FluidSquare fluid2D;
+    FluidSim simulation;
 
     public int fluidSize = 16;
     public float diffusion = 0;
@@ -35,26 +34,28 @@ public class Fluid : MonoBehaviour
             DestroyImmediate(water);
         }
 
-        fluid3D = new FluidCube(fluidSize, diffusion, viscocity, Time.deltaTime);
-        fluid2D = new FluidSquare(fluidSize, diffusion, viscocity, Time.deltaTime, 4);
+        //fluid3D = new FluidCube(fluidSize, diffusion, viscocity, Time.deltaTime);
+        //fluid2D = new FluidSquare(fluidSize, diffusion, viscocity, Time.deltaTime, 4);
+        simulation = new FluidSim(fluidSize, diffusion, viscocity, 4);
         CreateMesh2D();
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
         if (!update)
         {
             return;
         }
 
-        if (simulate3D)
-        {
-            fluid3D.Step();
-        }
-        else
-        {
-            fluid2D.Step();
-        }
+        //if (simulate3D)
+        //{
+        //    fluid3D.Step();
+        //}
+        //else
+        //{
+        //    fluid2D.Step();
+        //}
+        simulation.Update();
     }
 
     private void Update()
@@ -64,14 +65,7 @@ public class Fluid : MonoBehaviour
             return;
         }
 
-        if (simulate3D)
-        {
-            Update3D();
-        }
-        else
-        {
-            Update2D();
-        }
+        Update2D();
     }
 
     private void Update2D()
@@ -97,8 +91,9 @@ public class Fluid : MonoBehaviour
                     density = 2;
                 }
 
-                fluid2D.AddDensity(x, y, density);
-                fluid2D.AddVelocity(x, y, velX, velY);
+                //fluid2D.AddDensity(x, y, density);
+                //fluid2D.AddVelocity(x, y, velX, velY);
+                simulation.ApplyForceAt(x, y, velX, velY, density);
             }
         }
 
@@ -123,7 +118,7 @@ public class Fluid : MonoBehaviour
         //    return;
         //}
 
-        int size = fluid2D.Size();
+        int size = simulation.Size();
 
         Vector3[] verts = new Vector3[size * size];
         Vector2[] uv = new Vector2[size * size];
@@ -190,7 +185,7 @@ public class Fluid : MonoBehaviour
 
     private void ColorVertices()
     {
-        int size = fluid2D.Size();
+        int size = simulation.Size();
 
         int i = 0;
         for (int x = 0; x < size; x++)
@@ -199,9 +194,9 @@ public class Fluid : MonoBehaviour
             {
                 //r, g, b is the velocity at that point
                 //a is the density
-                float dens = fluid2D.Density(x, y)+ 0.01f;
-                float xVel = fluid2D.VelocityX(x, y);
-                float yVel = fluid2D.VelocityY(x, y);
+                float dens = simulation.Density(x, y)+ 0.01f;
+                float xVel = simulation.VelocityX(x, y);
+                float yVel = simulation.VelocityY(x, y);
                 Color col = new Color(xVel, yVel, 0, dens);
 
                 colors[i] = col;
@@ -259,7 +254,7 @@ public class Fluid : MonoBehaviour
         float xVel = rb.velocity.x;
         float yVel = rb.velocity.z;
         Debug.Log(new Vector2(x, y));
-        fluid2D.AddVelocity(x, y, xVel * speed, yVel * speed);
+        //fluid2D.AddVelocity(x, y, xVel * speed, yVel * speed);
     }
 
     public void CircleSplash(Vector3 worldCoords, float power)
@@ -277,7 +272,7 @@ public class Fluid : MonoBehaviour
                 force.Normalize();
                 force *= (power/8);
 
-                fluid2D.AddDensity(centerX + x, centerY + y, power/2);
+                //fluid2D.AddDensity(centerX + x, centerY + y, power/2);
                 //fluid2D.AddVelocity(centerX + x, centerY + y, force.x, force.y);
             }
         }
