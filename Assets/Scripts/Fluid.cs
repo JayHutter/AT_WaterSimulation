@@ -24,6 +24,9 @@ public class Fluid : MonoBehaviour
 
     Mesh mesh;
     Color[] colors;
+    
+    [Range(0, 10)]
+    public int accuracy = 1;
 
     //GameObject waterObj;
 
@@ -36,39 +39,28 @@ public class Fluid : MonoBehaviour
 
         //fluid3D = new FluidCube(fluidSize, diffusion, viscocity, Time.deltaTime);
         //fluid2D = new FluidSquare(fluidSize, diffusion, viscocity, Time.deltaTime, 4);
-        simulation = new FluidSim(fluidSize, diffusion, viscocity, 4);
+        simulation = new FluidSim(fluidSize, diffusion, viscocity, accuracy);
         CreateMesh2D();
     }
 
     private void FixedUpdate()
     {
-        if (!update)
-        {
-            return;
-        }
-
-        //if (simulate3D)
-        //{
-        //    fluid3D.Step();
-        //}
-        //else
-        //{
-        //    fluid2D.Step();
-        //}
         simulation.Update();
     }
 
     private void Update()
     {
-        if (!update)
+        if (!mesh)
         {
             return;
         }
 
-        Update2D();
+        MouseInteractions();
+
+        UpdateMesh();
     }
 
-    private void Update2D()
+    private void MouseInteractions()
     {
         if (Input.GetMouseButton(0))
         {
@@ -78,8 +70,8 @@ public class Fluid : MonoBehaviour
             {
                 Vector2 coords = LocalCoords(hit.point);
 
-                float velX = Input.GetAxis("Mouse X") * 20;
-                float velY = Input.GetAxis("Mouse Y") * 20;
+                float velX = Input.GetAxis("Mouse X");
+                float velY = Input.GetAxis("Mouse Y");
 
                 int x = (int)coords.x;
                 int y = (int)coords.y;
@@ -93,18 +85,10 @@ public class Fluid : MonoBehaviour
 
                 //fluid2D.AddDensity(x, y, density);
                 //fluid2D.AddVelocity(x, y, velX, velY);
-                simulation.ApplyForceAt(x, y, velX, velY, density);
+                simulation.ApplyForceAt(x, y, velY, velY, density);
             }
         }
-
-        ColorVertices();
     }
-
-    private void Update3D()
-    {
-
-    }
-
 
     void CreateMesh2D()
     {
@@ -183,7 +167,7 @@ public class Fluid : MonoBehaviour
         water.transform.localPosition = Vector3.zero;
     }
 
-    private void ColorVertices()
+    private void UpdateMesh()
     {
         int size = simulation.Size();
 
@@ -195,8 +179,8 @@ public class Fluid : MonoBehaviour
                 //r, g, b is the velocity at that point
                 //a is the density
                 float dens = simulation.Density(x, y)+ 0.01f;
-                float xVel = simulation.VelocityX(x, y);
-                float yVel = simulation.VelocityY(x, y);
+                float xVel = simulation.VelocityX(x, y) * 5;
+                float yVel = simulation.VelocityY(x, y) * 5;
                 Color col = new Color(xVel, yVel, 0, dens);
 
                 colors[i] = col;

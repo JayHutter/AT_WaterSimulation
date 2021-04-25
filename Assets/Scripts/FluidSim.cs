@@ -45,7 +45,7 @@ public class FluidSim
     }
 
     // At the edge of the grid reflect the water inwards
-    void SetBounds(DataType type, float[,] data)
+    void SetBounds(int type, float[,] data)
     {
         /*
          * Far Left and Far Right cells
@@ -54,10 +54,10 @@ public class FluidSim
         */
         for (int x = 1; x < size - 1; x++)
         {
-            data[x, 0] = type == DataType.YVELOCITY ?
+            data[x, 0] = type == 3 ?
                 -data[x, 1] : data[x, 1];
 
-            data[x, size - 1] = type == DataType.YVELOCITY ?
+            data[x, size - 1] = type == 3 ?
                 -data[x, size - 2] : data[x, size - 2];
         }
 
@@ -68,10 +68,10 @@ public class FluidSim
         */
         for (int y = 1; y < size - 1; y++)
         {
-            data[0, y] = type == DataType.XVELOCITY ?
+            data[0, y] = type == 1 ?
                 -data[1, y] : data[1, y];
 
-            data[size - 1, y] = type == DataType.XVELOCITY ?
+            data[size - 1, y] = type == 1 ?
                 -data[size - 2, y] : data[size - 2, y];
         }
 
@@ -89,20 +89,20 @@ public class FluidSim
         float reciprocal = 1.0f / c;
         for (int i = 0; i < accuracy; i++)
         {
-            for (int x = 1; x < size - 2; x++)
+            for (int x = 1; x < size - 1; x++)
             {
-                for (int y = 1; y < size - 2; y++)
+                for (int y = 1; y < size - 1; y++)
                 {
                     data[x, y] = (data0[x, y] + a
                         * (data[x + 1, y] + data[x - 1, y]
-                        + data[x, y + 1] * data[x, y - 1]))
+                        + data[x, y + 1] + data[x, y - 1]))
                         * reciprocal;
                 }
             }
-        }
 
-        //Update boundry data
-        SetBounds(type, data);
+            //Update boundry data
+            SetBounds((int)type, data);
+        }
     }
 
     void Diffuse(DataType type, float[,] data, float[,] data0, float d)
@@ -127,7 +127,7 @@ public class FluidSim
             for (int y = 1; y < size - 1; y++)
             {
                 float tempX = velX[x, y] * dtX;
-                float tempY = velY[x, y] * dtX;
+                float tempY = velY[x, y] * dtY;
 
                 float xVel = x - tempX;
                 float yVel = y - tempY;
@@ -145,7 +145,7 @@ public class FluidSim
                 float s1 = xVel - x0;
                 float s0 = 1.0f - s1;
                 float t1 = yVel - y0;
-                float t0 = 1.0f + t1;
+                float t0 = 1.0f - t1;
 
                 if (x0 >= size || x1 >= size ||
                     y0 >= size || y1 >= size ||
@@ -159,11 +159,11 @@ public class FluidSim
 
                 data[x, y] =
                     s0 * (t0 * data0[x0, y0] + t1 * data0[x0, y1]) +
-                    s1 * (t1 * data0[x1, y0] + t1 * data0[x1, y1]);
+                    s1 * (t0 * data0[x1, y0] + t1 * data0[x1, y1]);
             }
         }
 
-        SetBounds(type, data);
+        SetBounds((int)type, data);
     }
 
     void Project(float[,] velX, float[,] velY, float[,] p, float[,] div)
@@ -180,23 +180,21 @@ public class FluidSim
             }
         }
 
-        SetBounds(DataType.OTHER, div);
-        SetBounds(DataType.OTHER, p);
-        LinearSolve(DataType.OTHER, p, div, 1, 6);
+        SetBounds((int)DataType.OTHER, div);
+        SetBounds((int)DataType.OTHER, p);
+        LinearSolve((int)DataType.OTHER, p, div, 1, 6);
 
-        for (int x = 0; x < size - 2; x++)
+        for (int x = 1; x < size - 1; x++)
         {
-            for (int y = 0; y < size - 2; y++)
+            for (int y = 1; y < size - 1; y++)
             {
-                Debug.Log("X " + x);
-                Debug.Log("Y " + y);
-                velX[x, y] = 0;// -= 0.5f * (p[x + 1, y] - p[x - 1, y]) * size;
-                velY[x, y] = 0;// -= 0.5f * (p[x, y + 1] - p[x, y - 1]) * size;
+                velX[x, y] -= 0.5f * (p[x + 1, y] - p[x - 1, y]) * size;
+                velY[x, y] -= 0.5f * (p[x, y + 1] - p[x, y - 1]) * size;
             }
         }
 
-        SetBounds(DataType.XVELOCITY, velX);
-        SetBounds(DataType.YVELOCITY, velY);
+        SetBounds((int)DataType.XVELOCITY, velX);
+        SetBounds((int)DataType.YVELOCITY, velY);
     }
 
     public void Update()
@@ -222,6 +220,12 @@ public class FluidSim
 
     public void ApplyForceAt(int x, int y, float xVel, float yVel, float strength)
     {
+        if (x < 0 || y < 0 || 
+            x >= size || y >= size)
+        {
+            return;
+        }
+
         velocityX[x, y] += xVel;
         velocityY[x, y] += yVel;
         density[x, y] += strength;
