@@ -227,7 +227,7 @@ public class Fluid : MonoBehaviour
         float xVel = rb.velocity.x;
         float yVel = rb.velocity.z;
 
-        simulation.ApplyForceAt(x, y, xVel, yVel, 0);
+        //simulation.ApplyForceAt(x, y, xVel, yVel, 0);
     }
 
     public void CircleSplash(Vector3 worldCoords, float power)
@@ -242,8 +242,8 @@ public class Fluid : MonoBehaviour
             {
                 Vector2 force = new Vector2(x, y);
                 force.Normalize();
-                force *= (power/8);
-                simulation.ApplyForceAt(centerX + x, centerY + y, force, power);
+                force *= (power/5);
+                simulation.ApplyForceAt(centerX + x, centerY + y, force, power/5);
             }
         }
     }
