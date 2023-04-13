@@ -11,12 +11,19 @@ public class CameraController : MonoBehaviour
     VolumeProfile volume;
     ColorAdjustments colorAdj;
 
+    Vector3 startPos;
+    Quaternion startRot;
+
     private void Start()
     {
         cam = Camera.main;
 
         volume = FindObjectOfType<Volume>().GetComponent<Volume>().profile;
         volume.TryGet(out colorAdj);
+
+
+        startPos = cam.transform.position;
+        startRot = cam.transform.rotation;
     }
 
     private void Update()
@@ -68,11 +75,17 @@ public class CameraController : MonoBehaviour
         }
 
         cam.transform.position = pos;
+
+        if (Input.GetKey(KeyCode.Tab))
+        {
+            ResetCamera();
+        }
     }
 
     private void AimCamera()
     {
-        cam.transform.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0));
+        var rotation = new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0);
+        cam.transform.eulerAngles += rotation;
     }
 
     private void OnTriggerStay(Collider other)
@@ -97,5 +110,11 @@ public class CameraController : MonoBehaviour
             }
 
         }
+    }
+
+    private void ResetCamera()
+    {
+        cam.transform.position = startPos;
+        cam.transform.rotation = startRot;
     }
 }

@@ -100,7 +100,7 @@ Material:
     - Boolean_821f6377cf014a228cd6906e38176ab8: 1
     - Vector1_0f3b4f6f34b5412eb037bbb456f8ea72: 0.5
     - Vector1_103e2fa93c6141f9a4daeba1b0e95463: 1
-    - Vector1_1e01c3da8b2c4e41afc2759de1256bd3: 0
+    - Vector1_1e01c3da8b2c4e41afc2759de1256bd3: 1
     - Vector1_23f99f19e38f48c28056ab3ec352334a: 0.7
     - Vector1_30ba1f96a0ea46139d5428c56e2c49a4: 1
     - Vector1_63d69f2c4c4c4561999d42ec84caf700: 2
@@ -138,12 +138,12 @@ Material:
     m_Colors:
     - Color_61bf35356bb9468d91da9cf16b30c82f: {r: 32, g: 2.1333334, b: 0, a: 1}
     - Color_b7bab7ff29fa4fbc9ec8e8e2de3952d8: {r: 31.999996, g: 0.31984243, b: 0, a: 0.78431374}
-    - Color_c186662fdb6c41cb802391d83ddbbf99: {r: 32, g: 0, b: 1.0114136, a: 1}
+    - Color_c186662fdb6c41cb802391d83ddbbf99: {r: 31.999996, g: 15.542919, b: 0, a: 1}
     - Vector2_2e3a13c60f984fa0945c82ab45c32092: {r: 10, g: 10, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorDeep: {r: 32, g: 1.2778417, b: 0, a: 0.7843137}
-    - _ColorShallow: {r: 23.968628, g: 4.392157, b: 0, a: 0.78431374}
+    - _ColorShallow: {r: 0.1655753, g: 0.00338119, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []
